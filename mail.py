@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import imaplib, email, os, datetime
 
 user = "m2dkcorreo@gmail.com"    #User name del correo al que queremos acceder
@@ -31,9 +33,11 @@ for x in range(i):
     email_from = email_message['From']
     email_to = email_message['To']
     subject = email_message['Subject']
+    content = get_body(email_message)
+    content = bytes(str(content), "utf-8").decode("unicode_escape")
     print(email_from + ' - '  + local_message_date)
     print (subject)
-    print (get_body(email_message))
+    print (content)
 
     
 #latest_email_uid = data[0].split()[-1]
