@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-
-import imaplib, email, os, datetime
-
-user = "m2dkcorreo@gmail.com"    #User name del correo al que queremos acceder
-password = "12345678abcde"       #Contrasena del correo al que queremos acceder
-imap_url = "imap.gmail.com"      #Algo que no se muy bien como funciona
+import imaplib, email, os, datetime, idlelib, time,configparser
+config = configparser.ConfigParser() #creo el objeto para manejar el archivo de configuracion
+config.read('config.mail') #leo mi archivo de configuracion
+user = config['ACCOUNT']['username']    #User name del correo al que queremos acceder sacado de la etiqueta ACCOUNT username
+password = config['ACCOUNT']['password']       #Contrasena del correo al que queremos  sacado de la etiquera ACCOUNT password
+imap_url = config['SERVER']['hostname']      #Server sacado de SERVER hostname
 
 
 connection = imaplib.IMAP4_SSL(imap_url)        #Conexion de tipo IMAP4 que provee python para poder hacer la verificacion con gmail
 connection.login(user,password)                 #Conexion que toma como parametros el user creado anteriormente y la contrasena del correo
 connection.list()
 connection.select("INBOX")
+
                                                 #print(connection.select('INBOX'))#Print para saber si me estoy conectando
 #Esta funcion obtiene el cuerpo del mensaje, filtrando un poco de la informacion que obtiene la data completa
 def get_body(msg):
@@ -18,9 +19,10 @@ def get_body(msg):
         return get_body(msg.get_payload(0))
     else:
         return msg.get_payload(None, True)
-#fin funcion
-result, data = connection.uid('search',None,"ALL")
+    
+result, data = connection.uid('search',None,"UNSEEN")
 i = len(data[0].split())
+
 for x in range(i):
     latest_email_uid = data[0].split()[x]
     result, email_data = connection.uid('fetch', latest_email_uid, '(RFC822)')
@@ -37,9 +39,9 @@ for x in range(i):
     content = bytes(str(content), "utf-8").decode("unicode_escape")
     print(email_from + ' - '  + local_message_date)
     print (subject)
-    print (content)
+    print("\n")
 
-    
+
 #latest_email_uid = data[0].split()[-1]
 #result,data = connection.uid ('fetch',latest_email_uid,'(RFC822)')
 #print(data[0][1])

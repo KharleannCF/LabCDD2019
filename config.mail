@@ -1,0 +1,7 @@
+[ACCOUNT]
+username = m2dkcorreo@gmail.com
+password = 12345678abcde
+
+[SERVER]
+hostname = imap.gmail.com
+port = 993
